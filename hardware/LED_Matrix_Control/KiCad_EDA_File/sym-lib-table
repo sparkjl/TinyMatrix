@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name led_matrix-eagle-import)(type Legacy)(uri ${KIPRJMOD}/led_matrix-eagle-import.lib)(options "")(descr ""))
+)

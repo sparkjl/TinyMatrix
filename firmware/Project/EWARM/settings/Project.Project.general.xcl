@@ -1,0 +1,15 @@
+"D:\Program Files\IAR Systems\Embedded Workbench 7.5\arm\bin\armproc.dll" 
+
+"D:\Program Files\IAR Systems\Embedded Workbench 7.5\arm\bin\armjlink2.dll" 
+
+"F:\03_Project\01_LED_Matrix\TinyMatrix\firmware\Project\EWARM\Project\Exe\Project.out" 
+
+--plugin "D:\Program Files\IAR Systems\Embedded Workbench 7.5\arm\bin\armbat.dll" 
+
+--device_macro "D:\Program Files\IAR Systems\Embedded Workbench 7.5\arm\config\debugger\ST\STM32F1xx_XL.dmac" 
+
+--flash_loader "D:\Program Files\IAR Systems\Embedded Workbench 7.5\arm\config\flashloader\ST\FlashSTM32F10xx8.board" 
+
+
+
+
