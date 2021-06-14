@@ -10,8 +10,8 @@ void Task_Start(void)
   /* add your task here */
   api_task_create(Task_SysdataHandle, 2000);
   api_task_create(Task_KeyScan, 30);
-  api_task_create(Task_MatrixSparkle, 1000);
-  api_task_create(Task_MatrixShift, 50);
+  api_task_create(Task_MatrixBlink, 1000);
+  api_task_create(Task_MatrixShift, 160);
   api_task_create(Task_LED1, 1000);
   api_task_create(Task_MenuHandle, 100);
   api_task_create(Task_FontHandle, 10);
@@ -26,25 +26,12 @@ void Task_SysdataHandle(void)
   }
 }
 
-void Task_MatrixScan(void)
-{
-  if(tim2_is_up == 1)
-  {
-    tim2_is_up = 0;
-#if 0
-    bsp_hub75_write_pixel(hub75_panel_buff);
-#else
-    bsp_hub75_write_byte(hub75_buff, hub75_color);
-#endif
-  }
-}
-
-void Task_MatrixSparkle(void)
+void Task_MatrixBlink(void)
 {
   static uint8_t r = 255, g = 255, b = 255;
 
 #if 1
-  if(hub75_sparkle)
+  if(hub75_blink)
   {
     if(hub75_color++ == HUB75_Color_White)
       hub75_color = HUB75_Color_Black;

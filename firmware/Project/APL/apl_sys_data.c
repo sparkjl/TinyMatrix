@@ -30,9 +30,9 @@ void apl_sys_data_read(void)
 
   hub75_color = sys_data.display_color;
   if(hub75_color == HUB75_Color_Black)
-    hub75_sparkle = 1;
+    hub75_blink = 1;
   else
-    hub75_sparkle = 0;
+    hub75_blink = 0;
 }
 
 void apl_sys_data_write(void)

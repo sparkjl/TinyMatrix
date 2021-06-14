@@ -1,6 +1,6 @@
 #include "includes.h"
 
-uint8_t tim2_is_up = 0;
+
 
 void api_tim_start(void)
 {
@@ -14,7 +14,7 @@ void api_tim_stop(void)
 
 void api_tim_handle(void)
 {
-  //static uint8_t tim_count = 15;
+  static uint8_t tim_count = 15;
 
   /*
     HUB75_PANEL_HEIGHT = 64pix
@@ -26,19 +26,22 @@ void api_tim_handle(void)
     Period(LED_Matrix_PLANE_3) = TIM_Period * 1;
   */
 
+#if 0
   //if( (tim_count == 15) || (tim_count == 7) || (tim_count == 3) || (tim_count == 1) )
   //{
     bsp_hub75_write_pixel(hub75_panel_buff);
   //}
+#else
+  if(tim_count == 1)
+  {
+    bsp_hub75_write_byte(hub75_buff, hub75_color);
+  }
+#endif
   
-  //if(tim_count > 1)
-  //{
-  //  tim_count--;
-  //}
-  //else
-  //{
-  //  tim_count = 15;
-  //}
+  if(tim_count-- == 1)
+  {
+    tim_count = 15;
+  }
 
 }
 
@@ -46,8 +49,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
   if(htim->Instance == TIM2)
   {
-    //api_tim_handle();
-    tim2_is_up = 1;
+    api_tim_handle();
   }
 
 }

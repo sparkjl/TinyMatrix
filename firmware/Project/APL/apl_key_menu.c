@@ -222,42 +222,42 @@ void apl_menu_2_callback(void)
       if(set_item == 1)
       {
         hub75_color = HUB75_Color_Red;
-        hub75_sparkle = 0;
+        hub75_blink = 0;
       }
       else if(set_item == 2)
       {
         hub75_color = HUB75_Color_Green;
-        hub75_sparkle = 0;
+        hub75_blink = 0;
       }
       else if(set_item == 3)
       {
         hub75_color = HUB75_Color_Yellow;
-        hub75_sparkle = 0;
+        hub75_blink = 0;
       }
       else if(set_item == 4)
       {
         hub75_color = HUB75_Color_Blue;
-        hub75_sparkle = 0;
+        hub75_blink = 0;
       }
       else if(set_item == 5)
       {
         hub75_color = HUB75_Color_Pink;
-        hub75_sparkle = 0;
+        hub75_blink = 0;
       }
       else if(set_item == 6)
       {
         hub75_color = HUB75_Color_Cyan;
-        hub75_sparkle = 0;
+        hub75_blink = 0;
       }
       else if(set_item == 7)
       {
         hub75_color = HUB75_Color_White;
-        hub75_sparkle = 0;
+        hub75_blink = 0;
       }
       else if(set_item == 8)
       {
         hub75_color = HUB75_Color_Black;
-        hub75_sparkle = 1;
+        hub75_blink = 1;
       }
       else if(set_item == 9)
       {

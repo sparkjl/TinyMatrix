@@ -128,7 +128,6 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
     Task_Handle();
-    Task_MatrixScan();
   }
   /* USER CODE END 3 */
 }

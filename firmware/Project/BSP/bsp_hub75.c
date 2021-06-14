@@ -2,7 +2,7 @@
 
 uint8_t hub75_buff[HUB75_PANEL_WIDTH/8 * HUB75_PANEL_HEIGHT];
 uint8_t hub75_color = HUB75_Color_Pink;
-uint8_t hub75_sparkle = 0;
+uint8_t hub75_blink = 0;
 
 uint8_t hub75_panel_buff[HUB75_PANEL_WIDTH * HUB75_PANEL_HEIGHT / 2 * 3];
 

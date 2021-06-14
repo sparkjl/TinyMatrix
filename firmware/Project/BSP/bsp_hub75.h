@@ -50,7 +50,7 @@ typedef enum
 
 extern uint8_t hub75_buff[HUB75_PANEL_WIDTH/8 * HUB75_PANEL_HEIGHT];
 extern uint8_t hub75_color;
-extern uint8_t hub75_sparkle;
+extern uint8_t hub75_blink;
 
 extern uint8_t hub75_panel_buff[HUB75_PANEL_WIDTH * HUB75_PANEL_HEIGHT / 2 * 3];
 
