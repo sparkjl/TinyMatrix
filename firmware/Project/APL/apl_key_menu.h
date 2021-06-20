@@ -10,6 +10,8 @@ typedef enum
   Menu_2,
   Menu_3,
 
+  Menu_1_1,
+
 } Menu_StateTypeDef;
 
 static Menu_StateTypeDef menu_state;
@@ -26,6 +28,8 @@ void apl_menu_1_callback(void);
 void apl_menu_1_display(uint8_t page);
 void apl_menu_2_callback(void);
 void apl_menu_2_display(uint8_t page);
+void apl_menu_1_1_callback(void);
+void apl_menu_1_1_display(uint8_t page);
 
 #endif /* __APL_KEY_MENU_H_ */
 

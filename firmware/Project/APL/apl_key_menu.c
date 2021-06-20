@@ -38,6 +38,10 @@ void apl_menu_handle(void)
       case Menu_3:
         break;
 
+      case Menu_1_1:
+        apl_menu_1_1_callback();
+        break;
+
       default:
         break;
     }
@@ -155,9 +159,9 @@ void apl_menu_m_display(uint8_t page)
   //apl_led_matrix_write_str(" SET UP ", 0);
   if(page == 0)
   {
-    apl_font_display(0, 16, HUB75_PANEL_WIDTH, 16, "1.Mode  ", 16, 0);
+    apl_font_display(0, 16, HUB75_PANEL_WIDTH, 16, "1.Font  ", 16, 0);
     apl_font_display(0, 32, HUB75_PANEL_WIDTH, 16, "2.Color ", 16, 0);
-    apl_font_display(0, 48, HUB75_PANEL_WIDTH, 16, "3.Langua", 16, 0);
+    apl_font_display(0, 48, HUB75_PANEL_WIDTH, 16, "3.Lang  ", 16, 0);
     apl_font_reverse(0, menu_item*16, HUB75_PANEL_WIDTH, 16);
     //apl_led_matrix_write_str("1.Mode  ", 1);
     //apl_led_matrix_write_str("2.Color ", 2);
@@ -194,7 +198,7 @@ void apl_menu_1_callback(void)
       {
         //memset(font_buff, 0, sizeof(font_buff));
         //bsp_w25qx_read(font_buff, HZ_FONT_ADDR_0, 256);
-        font_mode = 0;
+        font_size = 12;
       }
       else if(menu_item == 2)
       {
@@ -207,13 +211,15 @@ void apl_menu_1_callback(void)
         //font_buff[6] = 0x69;
         //font_buff[7] = 0x00;
         //bsp_w25qx_write(font_buff, HZ_FONT_ADDR_0, 256);
-        font_mode = 1;
+        font_size = 16;
       }
       else if(menu_item == 3)
       {
-        apl_font_erase(0);
-        font_mode = 2;
+        font_size = 24;
       }
+      menu_state = Menu_1_1;
+      menu_item = 1;
+      apl_menu_1_1_display((menu_item-1)/3);
       break;
 
     case KEY3_LONG:
@@ -236,13 +242,13 @@ void apl_menu_1_callback(void)
 
 void apl_menu_1_display(uint8_t page)
 {
-  apl_font_display(0, 0, HUB75_PANEL_WIDTH, 16, "  MODE  ", 16, 0);
+  apl_font_display(0, 0, HUB75_PANEL_WIDTH, 16, "  FONT  ", 16, 0);
   //apl_led_matrix_write_str("  MODE  ", 0);
   if(page == 0)
   {
-    apl_font_display(0, 16, HUB75_PANEL_WIDTH, 16, "1.Static", 16, 0);
-    apl_font_display(0, 32, HUB75_PANEL_WIDTH, 16, "2.Dynami", 16, 0);
-    apl_font_display(0, 48, HUB75_PANEL_WIDTH, 16, "3.Upgrad", 16, 0);
+    apl_font_display(0, 16, HUB75_PANEL_WIDTH, 16, "1.Font12", 16, 0);
+    apl_font_display(0, 32, HUB75_PANEL_WIDTH, 16, "2.Font16", 16, 0);
+    apl_font_display(0, 48, HUB75_PANEL_WIDTH, 16, "3.Font24", 16, 0);
     apl_font_reverse(0, menu_item*16, HUB75_PANEL_WIDTH, 16);
     //apl_led_matrix_write_str("1.Static", 1);
     //apl_led_matrix_write_str("2.Dynami", 2);
@@ -317,7 +323,7 @@ void apl_menu_2_callback(void)
       }
       else if(menu_item == 9)
       {
-        apl_font_display(0, 0, HUB75_PANEL_WIDTH, 12, "Spark Zheng", 12, 0);
+        apl_font_display(0,  0, HUB75_PANEL_WIDTH, 12, "Spark Zheng", 12, 0);
         apl_font_display(0, 12, HUB75_PANEL_WIDTH, 12, "Led Matrix", 12, 0);
         apl_font_display(0, 24, HUB75_PANEL_WIDTH, 16, "WellDone", 16, 0);
         apl_font_display(0, 40, HUB75_PANEL_WIDTH, 24, "Fight!", 24, 0);
@@ -378,6 +384,87 @@ void apl_menu_2_display(uint8_t page)
     //apl_led_matrix_write_str("8.Auto  ", 2);
     //apl_led_matrix_write_str("        ", 3);
     //apl_led_matrix_invert_row(menu_item-6);
+  }
+}
+
+void apl_menu_1_1_callback(void)
+{
+
+  switch(key_value)
+  {
+    case KEY1_SHORT:
+      if(menu_item-- == 1)
+        menu_item = 3;
+      apl_menu_1_1_display((menu_item-1)/3);
+      break;
+
+    case KEY1_LONG:
+      break;
+
+    case KEY2_SHORT:
+      if(menu_item++ == 3)
+        menu_item = 1;
+      apl_menu_1_1_display((menu_item-1)/3);
+      break;
+
+    case KEY2_LONG:
+      break;
+
+    case KEY3_SHORT:
+      if(menu_item == 1)
+      {
+        font_mode = 0;
+        apl_font_display(0, 16, HUB75_PANEL_WIDTH, 16, "< < Dis ", 16, 0);
+        sys_data.font_size = font_size;
+      }
+      else if(menu_item == 2)
+      {
+        font_mode = 1;
+        apl_font_display(0, 32, HUB75_PANEL_WIDTH, 16, " Upg > >", 16, 0);
+      }
+      else if(menu_item == 3)
+      {
+        font_mode = 2;
+        apl_font_display(0, 48, HUB75_PANEL_WIDTH, 16, "Erasing.", 16, 0);
+        if(font_size == 12)
+          apl_font_erase(0);
+        else if(font_size == 16)
+          apl_font_erase(1);
+        else if(font_size == 24)
+          apl_font_erase(2);
+        apl_font_display(0, 48, HUB75_PANEL_WIDTH, 16, "Era Done", 16, 0);
+      }
+      break;
+
+    case KEY3_LONG:
+      break;
+
+    case KEY4_SHORT:
+      menu_state = Menu_1;
+      menu_item = 1;
+      apl_menu_1_display((menu_item-1)/3);
+      break;
+
+    case KEY4_LONG:
+      break;
+
+    default:
+      break;
+  }
+}
+
+void apl_menu_1_1_display(uint8_t page)
+{
+  uint8_t dis_str[20];
+
+  sprintf((char*)dis_str, " FONT%2d ", font_size);
+  apl_font_display(0, 0, HUB75_PANEL_WIDTH, 16, dis_str, 16, 0);
+  if(page == 0)
+  {
+    apl_font_display(0, 16, HUB75_PANEL_WIDTH, 16, "1.SEL. *", 16, 0);
+    apl_font_display(0, 32, HUB75_PANEL_WIDTH, 16, "2.UPG. *", 16, 0);
+    apl_font_display(0, 48, HUB75_PANEL_WIDTH, 16, "3.EAU. !", 16, 0);
+    apl_font_reverse(0, menu_item*16, HUB75_PANEL_WIDTH, 16);
   }
 }
 

@@ -21,7 +21,7 @@ extern unsigned char chardot[1520];
 //extern unsigned char ascii_1608[95][16];
 //extern unsigned char ascii_2412[95][36];
 
-extern uint32_t font_index;
+extern uint32_t font_size;
 extern uint8_t  font_mode;
 extern uint8_t  font_buff[256];
 

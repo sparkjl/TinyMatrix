@@ -125,10 +125,15 @@ void Task_FontHandle(void)
   }
   else if(font_mode == 1)
   {
+    if(font_size == 12)
+      apl_font_upgrade(0);
+    else if(font_size == 16)
+      apl_font_upgrade(1);
+    else if(font_size == 24)
+      apl_font_upgrade(2);
   }
   else if(font_mode == 2)
   {
-    apl_font_upgrade(0);
   }
 }
 

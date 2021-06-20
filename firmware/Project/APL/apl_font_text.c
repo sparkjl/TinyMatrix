@@ -1280,11 +1280,11 @@ __root const unsigned char ascii_2412[95][36]={
 //#endif
 };
 
-uint32_t font_index = 0;
-uint8_t  font_mode  = 0;
-uint8_t  font_buff[256];
+uint32_t font_size = 0xff;      // font size: font12, font16, font24
+uint8_t  font_mode  = 0;        // font mode: 0: select&display, 1: upgrade, 2: erase
+uint8_t  font_buff[256];        // font buff: buff for font data from uart.
 
-uint32_t font_addr[] = 
+uint32_t font_addr[] =          // font addr: font addr in spi flash
   {
     HZ_FONT_ADDR_0,
     HZ_FONT_ADDR_1,
