@@ -113,11 +113,9 @@ int main(void)
   api_uart_init();
   bsp_hub75_init();
   apl_sys_data_read();
-  //bsp_w25qx_read(font_buff, HZ_FONT_ADDR_0, 256);
   apl_menu_init();
-  apl_font_init();
-  Task_Start();
   api_tim_start();
+  Task_Start();
   /* USER CODE END 2 */
 
   /* Infinite loop */

@@ -1,12 +1,12 @@
 #include "includes.h"
 
-Menu_StateTypeDef menu_state = Menu_M;
+Menu_StateTypeDef menu_state = Menu_R;
+uint8_t menu_item = 1;
 uint8_t key_value = 0;
-uint8_t set_item = 1;
 
 void apl_menu_init(void)
 {
-  apl_menu_m_display((set_item-1)/3);
+  apl_menu_r_display((menu_item-1)/3);
 }
 
 void apl_menu_handle(void)
@@ -17,6 +17,12 @@ void apl_menu_handle(void)
   {
     switch(menu_state)
     {
+
+      case Menu_R:
+        apl_menu_r_callback();
+        break;
+
+
       case Menu_M:
         apl_menu_m_callback();
         break;
@@ -38,43 +44,89 @@ void apl_menu_handle(void)
   }
 }
 
-void apl_menu_m_callback(void)
+void apl_menu_r_callback(void)
 {
-
   switch(key_value)
   {
     case KEY1_SHORT:
-      if(set_item-- == 1)
-        set_item = 3;
-      apl_menu_m_display((set_item-1)/3);
       break;
 
     case KEY1_LONG:
       break;
 
     case KEY2_SHORT:
-      if(set_item++ == 3)
-        set_item = 1;
-      apl_menu_m_display((set_item-1)/3);
       break;
 
     case KEY2_LONG:
       break;
 
     case KEY3_SHORT:
-      if(set_item == 1)
+      break;
+
+    case KEY3_LONG:
+      menu_state = Menu_M;
+      menu_item = 1;
+      apl_menu_m_display((menu_item-1)/3);
+      api_task_delete(Task_MatrixShift);
+      break;
+
+    case KEY4_SHORT:
+      break;
+
+    case KEY4_LONG:
+      break;
+
+    default:
+      break;
+  }
+}
+
+void apl_menu_r_display(uint8_t page)
+{
+  apl_font_init();
+  apl_font_display(0,  0, HUB75_PANEL_WIDTH, 16, "        ", 16, 0);
+  apl_font_display(0, 16, HUB75_PANEL_WIDTH, 16, "        ", 16, 0);
+  apl_font_display(0, 32, HUB75_PANEL_WIDTH, 16, "        ", 16, 0);
+  apl_font_display(0, 48, HUB75_PANEL_WIDTH, 16, "        ", 16, 0);
+}
+
+void apl_menu_m_callback(void)
+{
+
+  switch(key_value)
+  {
+    case KEY1_SHORT:
+      if(menu_item-- == 1)
+        menu_item = 3;
+      apl_menu_m_display((menu_item-1)/3);
+      break;
+
+    case KEY1_LONG:
+      break;
+
+    case KEY2_SHORT:
+      if(menu_item++ == 3)
+        menu_item = 1;
+      apl_menu_m_display((menu_item-1)/3);
+      break;
+
+    case KEY2_LONG:
+      break;
+
+    case KEY3_SHORT:
+      if(menu_item == 1)
       {
         menu_state = Menu_1;
-        set_item = 1;
-        apl_menu_1_display((set_item-1)/3);
+        menu_item = 1;
+        apl_menu_1_display((menu_item-1)/3);
       }
-      else if(set_item == 2)
+      else if(menu_item == 2)
       {
         menu_state = Menu_2;
-        set_item = 1;
-        apl_menu_2_display((set_item-1)/3);
+        menu_item = 1;
+        apl_menu_2_display((menu_item-1)/3);
       }
-      else if(set_item == 3)
+      else if(menu_item == 3)
       {
       }
       break;
@@ -86,6 +138,10 @@ void apl_menu_m_callback(void)
       break;
 
     case KEY4_LONG:
+      menu_state = Menu_R;
+      menu_item = 1;
+      apl_menu_r_display((menu_item-1)/3);
+      api_task_create(Task_MatrixShift, 160);
       break;
 
     default:
@@ -102,11 +158,11 @@ void apl_menu_m_display(uint8_t page)
     apl_font_display(0, 16, HUB75_PANEL_WIDTH, 16, "1.Mode  ", 16, 0);
     apl_font_display(0, 32, HUB75_PANEL_WIDTH, 16, "2.Color ", 16, 0);
     apl_font_display(0, 48, HUB75_PANEL_WIDTH, 16, "3.Langua", 16, 0);
-    apl_font_reverse(0, set_item*16, HUB75_PANEL_WIDTH, 16);
+    apl_font_reverse(0, menu_item*16, HUB75_PANEL_WIDTH, 16);
     //apl_led_matrix_write_str("1.Mode  ", 1);
     //apl_led_matrix_write_str("2.Color ", 2);
     //apl_led_matrix_write_str("3.Langua", 3);
-    //apl_led_matrix_invert_row(set_item);
+    //apl_led_matrix_invert_row(menu_item);
   }
 }
 
@@ -116,31 +172,31 @@ void apl_menu_1_callback(void)
   switch(key_value)
   {
     case KEY1_SHORT:
-      if(set_item-- == 1)
-        set_item = 3;
-      apl_menu_1_display((set_item-1)/3);
+      if(menu_item-- == 1)
+        menu_item = 3;
+      apl_menu_1_display((menu_item-1)/3);
       break;
 
     case KEY1_LONG:
       break;
 
     case KEY2_SHORT:
-      if(set_item++ == 3)
-        set_item = 1;
-      apl_menu_1_display((set_item-1)/3);
+      if(menu_item++ == 3)
+        menu_item = 1;
+      apl_menu_1_display((menu_item-1)/3);
       break;
 
     case KEY2_LONG:
       break;
 
     case KEY3_SHORT:
-      if(set_item == 1)
+      if(menu_item == 1)
       {
         //memset(font_buff, 0, sizeof(font_buff));
         //bsp_w25qx_read(font_buff, HZ_FONT_ADDR_0, 256);
         font_mode = 0;
       }
-      else if(set_item == 2)
+      else if(menu_item == 2)
       {
         //font_buff[0] = 0xad;
         //font_buff[1] = 0x34;
@@ -153,7 +209,7 @@ void apl_menu_1_callback(void)
         //bsp_w25qx_write(font_buff, HZ_FONT_ADDR_0, 256);
         font_mode = 1;
       }
-      else if(set_item == 3)
+      else if(menu_item == 3)
       {
         apl_font_erase(0);
         font_mode = 2;
@@ -165,8 +221,8 @@ void apl_menu_1_callback(void)
 
     case KEY4_SHORT:
         menu_state = Menu_M;
-        set_item = 1;
-        apl_menu_m_display((set_item-1)/3);
+        menu_item = 1;
+        apl_menu_m_display((menu_item-1)/3);
         font_mode = 0;
       break;
 
@@ -187,11 +243,11 @@ void apl_menu_1_display(uint8_t page)
     apl_font_display(0, 16, HUB75_PANEL_WIDTH, 16, "1.Static", 16, 0);
     apl_font_display(0, 32, HUB75_PANEL_WIDTH, 16, "2.Dynami", 16, 0);
     apl_font_display(0, 48, HUB75_PANEL_WIDTH, 16, "3.Upgrad", 16, 0);
-    apl_font_reverse(0, set_item*16, HUB75_PANEL_WIDTH, 16);
+    apl_font_reverse(0, menu_item*16, HUB75_PANEL_WIDTH, 16);
     //apl_led_matrix_write_str("1.Static", 1);
     //apl_led_matrix_write_str("2.Dynami", 2);
     //apl_led_matrix_write_str("3.Upgrad", 3);
-    //apl_led_matrix_invert_row(set_item);
+    //apl_led_matrix_invert_row(menu_item);
   }
 }
 
@@ -201,65 +257,65 @@ void apl_menu_2_callback(void)
   switch(key_value)
   {
     case KEY1_SHORT:
-      if(set_item-- == 1)
-        set_item = 9;
-      apl_menu_2_display((set_item-1)/3);
+      if(menu_item-- == 1)
+        menu_item = 9;
+      apl_menu_2_display((menu_item-1)/3);
       break;
 
     case KEY1_LONG:
       break;
 
     case KEY2_SHORT:
-      if(set_item++ == 9)
-        set_item = 1;
-      apl_menu_2_display((set_item-1)/3);
+      if(menu_item++ == 9)
+        menu_item = 1;
+      apl_menu_2_display((menu_item-1)/3);
       break;
 
     case KEY2_LONG:
       break;
 
     case KEY3_SHORT:
-      if(set_item == 1)
+      if(menu_item == 1)
       {
         hub75_color = HUB75_Color_Red;
         hub75_blink = 0;
       }
-      else if(set_item == 2)
+      else if(menu_item == 2)
       {
         hub75_color = HUB75_Color_Green;
         hub75_blink = 0;
       }
-      else if(set_item == 3)
+      else if(menu_item == 3)
       {
         hub75_color = HUB75_Color_Yellow;
         hub75_blink = 0;
       }
-      else if(set_item == 4)
+      else if(menu_item == 4)
       {
         hub75_color = HUB75_Color_Blue;
         hub75_blink = 0;
       }
-      else if(set_item == 5)
+      else if(menu_item == 5)
       {
         hub75_color = HUB75_Color_Pink;
         hub75_blink = 0;
       }
-      else if(set_item == 6)
+      else if(menu_item == 6)
       {
         hub75_color = HUB75_Color_Cyan;
         hub75_blink = 0;
       }
-      else if(set_item == 7)
+      else if(menu_item == 7)
       {
         hub75_color = HUB75_Color_White;
         hub75_blink = 0;
       }
-      else if(set_item == 8)
+      else if(menu_item == 8)
       {
         hub75_color = HUB75_Color_Black;
         hub75_blink = 1;
       }
-      else if(set_item == 9)
+      else if(menu_item == 9)
       {
         apl_font_display(0, 0, HUB75_PANEL_WIDTH, 12, "Spark Zheng", 12, 0);
         apl_font_display(0, 12, HUB75_PANEL_WIDTH, 12, "Led Matrix", 12, 0);
@@ -274,8 +330,8 @@ void apl_menu_2_callback(void)
 
     case KEY4_SHORT:
         menu_state = Menu_M;
-        set_item = 1;
-        apl_menu_m_display((set_item-1)/3);
+        menu_item = 1;
+        apl_menu_m_display((menu_item-1)/3);
       break;
 
     case KEY4_LONG:
@@ -295,33 +351,33 @@ void apl_menu_2_display(uint8_t page)
     apl_font_display(0, 16, HUB75_PANEL_WIDTH, 16, "1.Red   ", 16, 0);
     apl_font_display(0, 32, HUB75_PANEL_WIDTH, 16, "2.Green ", 16, 0);
     apl_font_display(0, 48, HUB75_PANEL_WIDTH, 16, "3.Yellow", 16, 0);
-    apl_font_reverse(0, (set_item)*16, HUB75_PANEL_WIDTH, 16);
+    apl_font_reverse(0, (menu_item)*16, HUB75_PANEL_WIDTH, 16);
     //apl_led_matrix_write_str("1.Red   ", 1);
     //apl_led_matrix_write_str("2.Green ", 2);
     //apl_led_matrix_write_str("3.Yellow", 3);
-    //apl_led_matrix_invert_row(set_item);
+    //apl_led_matrix_invert_row(menu_item);
   }
   else if(page == 1)
   {
     apl_font_display(0, 16, HUB75_PANEL_WIDTH, 16, "4.Blue  ", 16, 0);
     apl_font_display(0, 32, HUB75_PANEL_WIDTH, 16, "5.Pink  ", 16, 0);
     apl_font_display(0, 48, HUB75_PANEL_WIDTH, 16, "6.Cyan  ", 16, 0);
-    apl_font_reverse(0, (set_item-3)*16, HUB75_PANEL_WIDTH, 16);
+    apl_font_reverse(0, (menu_item-3)*16, HUB75_PANEL_WIDTH, 16);
     //apl_led_matrix_write_str("4.Blue  ", 1);
     //apl_led_matrix_write_str("5.Pink  ", 2);
     //apl_led_matrix_write_str("6.Cyan  ", 3);
-    //apl_led_matrix_invert_row(set_item-3);
+    //apl_led_matrix_invert_row(menu_item-3);
   }
   else if(page == 2)
   {
     apl_font_display(0, 16, HUB75_PANEL_WIDTH, 16, "7.White ", 16, 0);
     apl_font_display(0, 32, HUB75_PANEL_WIDTH, 16, "8.Auto  ", 16, 0);
     apl_font_display(0, 48, HUB75_PANEL_WIDTH, 16, "        ", 16, 0);
-    apl_font_reverse(0, (set_item-6)*16, HUB75_PANEL_WIDTH, 16);
+    apl_font_reverse(0, (menu_item-6)*16, HUB75_PANEL_WIDTH, 16);
     //apl_led_matrix_write_str("7.White ", 1);
     //apl_led_matrix_write_str("8.Auto  ", 2);
     //apl_led_matrix_write_str("        ", 3);
-    //apl_led_matrix_invert_row(set_item-6);
+    //apl_led_matrix_invert_row(menu_item-6);
   }
 }
 
