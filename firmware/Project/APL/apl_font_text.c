@@ -1311,6 +1311,13 @@ uint8_t apl_font_erase(uint8_t index)
   return status;
 }
 
+#if 1
+void apl_font_upgrade(uint8_t *p_buff, uint16_t size)
+{
+  bsp_w25qx_write_sector(p_buff, font_cursor, size);
+  font_cursor += size;
+}
+#else
 void apl_font_upgrade(uint8_t index)
 {
   uint8_t tx_str[60];
@@ -1326,6 +1333,7 @@ void apl_font_upgrade(uint8_t index)
     api_uart_tx_start(&uart1, tx_str, strlen(tx_str));
   }
 }
+#endif
 
 
 void apl_font_init(void)

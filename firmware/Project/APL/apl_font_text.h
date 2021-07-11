@@ -37,7 +37,8 @@ typedef struct
 extern Roll_DisplayTypeDef roll[16];
 
 uint8_t apl_font_erase(uint8_t index);
-void apl_font_upgrade(uint8_t index);
+//void apl_font_upgrade(uint8_t index);
+void apl_font_upgrade(uint8_t *p_buff, uint16_t size);
 
 void apl_font_init(void);
 void apl_font_display_char(uint16_t x, uint16_t y, uint8_t ch, uint8_t size, uint8_t mode);

@@ -5,6 +5,7 @@ void Task_Handle(void);
 void Task_Start(void);
 
 void Task_SysdataHandle(void);
+void Task_MatrixDisplay(void);
 void Task_MatrixTest(void);
 void Task_LED1(void);
 void Task_KeyScan(void);

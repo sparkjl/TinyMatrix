@@ -14,7 +14,7 @@ void Task_Start(void)
   api_task_create(Task_MatrixShift, 160);
   api_task_create(Task_LED1, 1000);
   api_task_create(Task_MenuHandle, 100);
-  api_task_create(Task_FontHandle, 10);
+  api_task_create(Task_FontHandle, 50);
   //api_task_create(Task_UartTx, 50);
 }
 
@@ -23,6 +23,15 @@ void Task_SysdataHandle(void)
   if(apl_sys_data_changed())
   {
     apl_sys_data_write();
+  }
+}
+
+void Task_MatrixDisplay(void)
+{
+  if(tim2_is_up == 1)
+  {
+    api_tim_handle();
+    tim2_is_up = 0;
   }
 }
 
@@ -125,12 +134,13 @@ void Task_FontHandle(void)
   }
   else if(font_mode == 1)
   {
-    if(font_size == 12)
-      apl_font_upgrade(0);
-    else if(font_size == 16)
-      apl_font_upgrade(1);
-    else if(font_size == 24)
-      apl_font_upgrade(2);
+//    if(font_size == 12)
+//      apl_font_upgrade(0);
+//    else if(font_size == 16)
+//      apl_font_upgrade(1);
+//    else if(font_size == 24)
+//      apl_font_upgrade(2);
+    apl_ulink_handle();
   }
   else if(font_mode == 2)
   {

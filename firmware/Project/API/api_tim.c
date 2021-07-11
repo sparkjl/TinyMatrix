@@ -1,6 +1,6 @@
 #include "includes.h"
 
-
+uint8_t tim2_is_up = 0;
 
 void api_tim_start(void)
 {
@@ -49,7 +49,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
   if(htim->Instance == TIM2)
   {
-    api_tim_handle();
+    //api_tim_handle();
+    tim2_is_up = 1;
   }
 
 }
