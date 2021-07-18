@@ -1,10 +1,14 @@
 #ifndef __FONT_H_
 #define __FONT_H_
 
-#define HZ_FONT_ADDR_0            0x00200000U      /* song12 font addr in spi flash */
-#define HZ_FONT_ADDR_1            0x0028D000U      /* song16 font addr in spi flash */
-#define HZ_FONT_ADDR_2            0x00349000U      /* song24 font addr in spi flash */
-#define HZ_FONT_ADDR_END          0x004EE000U      /* end font addr in spi flash */
+#define HZ_FONT_SIZE_0            0x0008D000U                          /* song12 font size:   577,536 bytes */
+#define HZ_FONT_SIZE_1            0x000BC000U                          /* song16 font size:   770,048 bytes */
+#define HZ_FONT_SIZE_2            0x001A5000U                          /* song24 font size: 1,724,416 bytes */
+
+#define HZ_FONT_ADDR_0            SYS_FONT_ADDR                        /* song12 font addr in spi flash */
+#define HZ_FONT_ADDR_1            HZ_FONT_ADDR_0 + HZ_FONT_SIZE_0      /* song16 font addr in spi flash */
+#define HZ_FONT_ADDR_2            HZ_FONT_ADDR_1 + HZ_FONT_SIZE_1      /* song24 font addr in spi flash */
+#define HZ_FONT_ADDR_END          HZ_FONT_ADDR_2 + HZ_FONT_SIZE_2      /* end font addr in spi flash */
 
 #define  hzNum       23
 #define  charNum     95
