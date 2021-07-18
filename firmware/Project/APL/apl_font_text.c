@@ -1415,7 +1415,7 @@ void apl_font_gethz(uint8_t *p_hz, uint8_t *p_data, uint8_t size)
   uint8_t csize = (size/8+((size%8)?1:0))*(size);
   uint32_t offset = 0;
 
-  qh = *(p_hz);
+  qh = *(p_hz++);
   ql = *(p_hz++);
 
   if(qh<0x81 || ql<0x40 || qh==0xff || ql==0xff)      // not a chinese font
@@ -1435,13 +1435,13 @@ void apl_font_gethz(uint8_t *p_hz, uint8_t *p_data, uint8_t size)
   switch(size)
   {
     case 12:
-      bsp_w25qx_read(p_data, offset + HZ_FONT_ADDR_0, csize);
+      bsp_w25qx_read(p_data, offset + font_addr[0], csize);
       break;
     case 16:
-      bsp_w25qx_read(p_data, offset + HZ_FONT_ADDR_1, csize);
+      bsp_w25qx_read(p_data, offset + font_addr[1], csize);
       break;
     case 24:
-      bsp_w25qx_read(p_data, offset + HZ_FONT_ADDR_2, csize);
+      bsp_w25qx_read(p_data, offset + font_addr[2], csize);
       break;
     default:
       break;

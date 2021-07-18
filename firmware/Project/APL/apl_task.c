@@ -14,7 +14,7 @@ void Task_Start(void)
   api_task_create(Task_MatrixShift, 160);
   api_task_create(Task_LED1, 1000);
   api_task_create(Task_MenuHandle, 100);
-  api_task_create(Task_FontHandle, 50);
+  api_task_create(Task_FontHandle, 10);
   //api_task_create(Task_UartTx, 50);
 }
 
