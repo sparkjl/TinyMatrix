@@ -156,17 +156,13 @@ void apl_menu_m_callback(void)
 void apl_menu_m_display(uint8_t page)
 {
   apl_font_display(0, 0, HUB75_PANEL_WIDTH, 16, " SET UP ", 16, 0);
-  //apl_led_matrix_write_str(" SET UP ", 0);
+
   if(page == 0)
   {
     apl_font_display(0, 16, HUB75_PANEL_WIDTH, 16, "1.Font  ", 16, 0);
     apl_font_display(0, 32, HUB75_PANEL_WIDTH, 16, "2.Color ", 16, 0);
     apl_font_display(0, 48, HUB75_PANEL_WIDTH, 16, "3.Lang  ", 16, 0);
     apl_font_reverse(0, menu_item*16, HUB75_PANEL_WIDTH, 16);
-    //apl_led_matrix_write_str("1.Mode  ", 1);
-    //apl_led_matrix_write_str("2.Color ", 2);
-    //apl_led_matrix_write_str("3.Langua", 3);
-    //apl_led_matrix_invert_row(menu_item);
   }
 }
 
@@ -243,17 +239,13 @@ void apl_menu_1_callback(void)
 void apl_menu_1_display(uint8_t page)
 {
   apl_font_display(0, 0, HUB75_PANEL_WIDTH, 16, "  FONT  ", 16, 0);
-  //apl_led_matrix_write_str("  MODE  ", 0);
+
   if(page == 0)
   {
     apl_font_display(0, 16, HUB75_PANEL_WIDTH, 16, "1.Font12", 16, 0);
     apl_font_display(0, 32, HUB75_PANEL_WIDTH, 16, "2.Font16", 16, 0);
     apl_font_display(0, 48, HUB75_PANEL_WIDTH, 16, "3.Font24", 16, 0);
     apl_font_reverse(0, menu_item*16, HUB75_PANEL_WIDTH, 16);
-    //apl_led_matrix_write_str("1.Static", 1);
-    //apl_led_matrix_write_str("2.Dynami", 2);
-    //apl_led_matrix_write_str("3.Upgrad", 3);
-    //apl_led_matrix_invert_row(menu_item);
   }
 }
 
@@ -351,17 +343,13 @@ void apl_menu_2_callback(void)
 void apl_menu_2_display(uint8_t page)
 {
   apl_font_display(0, 0, HUB75_PANEL_WIDTH, 16, "  COLOR ", 16, 0);
-  //apl_led_matrix_write_str("  COLOR ", 0);
+
   if(page == 0)
   {
     apl_font_display(0, 16, HUB75_PANEL_WIDTH, 16, "1.Red   ", 16, 0);
     apl_font_display(0, 32, HUB75_PANEL_WIDTH, 16, "2.Green ", 16, 0);
     apl_font_display(0, 48, HUB75_PANEL_WIDTH, 16, "3.Yellow", 16, 0);
     apl_font_reverse(0, (menu_item)*16, HUB75_PANEL_WIDTH, 16);
-    //apl_led_matrix_write_str("1.Red   ", 1);
-    //apl_led_matrix_write_str("2.Green ", 2);
-    //apl_led_matrix_write_str("3.Yellow", 3);
-    //apl_led_matrix_invert_row(menu_item);
   }
   else if(page == 1)
   {
@@ -369,10 +357,6 @@ void apl_menu_2_display(uint8_t page)
     apl_font_display(0, 32, HUB75_PANEL_WIDTH, 16, "5.Pink  ", 16, 0);
     apl_font_display(0, 48, HUB75_PANEL_WIDTH, 16, "6.Cyan  ", 16, 0);
     apl_font_reverse(0, (menu_item-3)*16, HUB75_PANEL_WIDTH, 16);
-    //apl_led_matrix_write_str("4.Blue  ", 1);
-    //apl_led_matrix_write_str("5.Pink  ", 2);
-    //apl_led_matrix_write_str("6.Cyan  ", 3);
-    //apl_led_matrix_invert_row(menu_item-3);
   }
   else if(page == 2)
   {
@@ -380,10 +364,6 @@ void apl_menu_2_display(uint8_t page)
     apl_font_display(0, 32, HUB75_PANEL_WIDTH, 16, "8.Auto  ", 16, 0);
     apl_font_display(0, 48, HUB75_PANEL_WIDTH, 16, "        ", 16, 0);
     apl_font_reverse(0, (menu_item-6)*16, HUB75_PANEL_WIDTH, 16);
-    //apl_led_matrix_write_str("7.White ", 1);
-    //apl_led_matrix_write_str("8.Auto  ", 2);
-    //apl_led_matrix_write_str("        ", 3);
-    //apl_led_matrix_invert_row(menu_item-6);
   }
 }
 
