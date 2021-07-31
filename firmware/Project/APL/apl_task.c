@@ -56,17 +56,10 @@ void Task_MatrixBlink(void)
 
 void Task_MatrixShift(void)
 {
-#if 1
   apl_font_rolling( 0, sys_data.font_text[0], 16, &roll[0]);
   apl_font_rolling(16, sys_data.font_text[1], 16, &roll[1]);
   apl_font_rolling(32, sys_data.font_text[2], 16, &roll[2]);
   apl_font_rolling(48, sys_data.font_text[3], 16, &roll[3]);
-#else
-  apl_led_matrix_left_shift( 0, 16, 1);
-  apl_led_matrix_left_shift(16, 16, 1);
-  apl_led_matrix_left_shift(32, 16, 1);
-  apl_led_matrix_left_shift(50, 16, 1);
-#endif
 }
 
 void Task_MatrixTest(void)
