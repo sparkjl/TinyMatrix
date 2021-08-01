@@ -17,8 +17,8 @@ typedef struct
   uint8_t       display_mode;
   uint8_t       display_language;
   uint8_t       font_size;
-  uint8_t       font_text[6][64];
-  uint8_t       reserved[548];            // 1024bytes in total
+  uint8_t       font_text[6][128];
+  uint8_t       reserved[164];            // 1024bytes in total
 
 } System_DataTypeDef;
 

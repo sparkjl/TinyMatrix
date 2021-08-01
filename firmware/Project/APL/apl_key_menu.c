@@ -192,21 +192,10 @@ void apl_menu_1_callback(void)
     case KEY3_SHORT:
       if(menu_item == 1)
       {
-        //memset(font_buff, 0, sizeof(font_buff));
-        //bsp_w25qx_read(font_buff, HZ_FONT_ADDR_0, 256);
         font_size = 12;
       }
       else if(menu_item == 2)
       {
-        //font_buff[0] = 0xad;
-        //font_buff[1] = 0x34;
-        //font_buff[2] = 0x56;
-        //font_buff[3] = 0x6a;
-        //font_buff[4] = 0xec;
-        //font_buff[5] = 0x96;
-        //font_buff[6] = 0x69;
-        //font_buff[7] = 0x00;
-        //bsp_w25qx_write(font_buff, HZ_FONT_ADDR_0, 256);
         font_size = 16;
       }
       else if(menu_item == 3)

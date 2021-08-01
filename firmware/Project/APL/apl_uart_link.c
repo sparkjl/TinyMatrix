@@ -177,22 +177,27 @@ uint8_t apl_ulink_handle(void)
         status = 2;
         switch(ulink.func)
         {
-          case 0:
+          case 0x00:
             break;
 
-          case 1:
+          case 0x01:
             apl_font_upgrade(ulink.data, ulink.length);
             break;
 
-          case 2:
-            strcpy((char*)sys_data.font_text[0], (char*)ulink.data);
+          case 0x10:
+          case 0x11:
+          case 0x12:
+          case 0x13:
+          case 0x14:
+          case 0x15:
+            strcpy((char*)sys_data.font_text[ulink.func & 0x0f], (char*)ulink.data);
             break;
 
           default:
             break;
         }
 
-        if(ulink.func == 1)
+        if(ulink.func == 0x01)
         {
           uart1.tx_buff[0] = ulink.addr;
           uart1.tx_buff[1] = ulink.func;

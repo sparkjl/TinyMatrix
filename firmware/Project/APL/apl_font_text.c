@@ -1053,14 +1053,14 @@ void apl_font_display_hz(uint16_t x, uint16_t y, uint8_t *p_hz, uint8_t size, ui
         apl_led_matrix_write_pixel(x, y, 0);
       temp <<= 1;
       y++;
-      if(y >= HUB75_PANEL_HEIGHT) 
-        return;
+      //if(y >= HUB75_PANEL_HEIGHT) 
+      //  return;
       if((y-y0) == size)
       {
         y = y0;
         x++;
-        if(x >= HUB75_PANEL_WIDTH)
-          return;
+        //if(x >= HUB75_PANEL_WIDTH)
+        //  return;
         break;
       }
     }
