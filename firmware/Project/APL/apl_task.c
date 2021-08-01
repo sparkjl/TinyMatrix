@@ -148,6 +148,7 @@ void Task_FontHandle(void)
 {
   if(font_mode == 0)
   {
+    apl_ulink_handle();
   }
   else if(font_mode == 1)
   {
