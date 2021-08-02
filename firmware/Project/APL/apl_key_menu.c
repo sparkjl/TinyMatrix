@@ -38,8 +38,20 @@ void apl_menu_handle(void)
       case Menu_3:
         break;
 
+      case Menu_4:
+        apl_menu_4_callback();
+        break;
+
       case Menu_1_1:
         apl_menu_1_1_callback();
+        break;
+
+      case Menu_4_1:
+        apl_menu_4_1_callback();
+        break;
+
+      case Menu_4_2:
+        apl_menu_4_2_callback();
         break;
 
       default:
@@ -101,7 +113,7 @@ void apl_menu_m_callback(void)
   {
     case KEY1_SHORT:
       if(menu_item-- == 1)
-        menu_item = 3;
+        menu_item = 4;
       apl_menu_m_display((menu_item-1)/3);
       break;
 
@@ -109,7 +121,7 @@ void apl_menu_m_callback(void)
       break;
 
     case KEY2_SHORT:
-      if(menu_item++ == 3)
+      if(menu_item++ == 4)
         menu_item = 1;
       apl_menu_m_display((menu_item-1)/3);
       break;
@@ -133,6 +145,12 @@ void apl_menu_m_callback(void)
       else if(menu_item == 3)
       {
       }
+      else if(menu_item == 4)
+      {
+        menu_state = Menu_4;
+        menu_item = 1;
+        apl_menu_4_display((menu_item-1)/3);
+      }
       break;
 
     case KEY3_LONG:
@@ -145,7 +163,7 @@ void apl_menu_m_callback(void)
       menu_state = Menu_R;
       menu_item = 1;
       apl_menu_r_display((menu_item-1)/3);
-      api_task_create(Task_MatrixShift, 160);
+      api_task_create(Task_MatrixShift, sys_data.shift_period);
       break;
 
     default:
@@ -163,6 +181,13 @@ void apl_menu_m_display(uint8_t page)
     apl_font_display(0, 32, HUB75_PANEL_WIDTH, 16, "2.Color ", 16, 0);
     apl_font_display(0, 48, HUB75_PANEL_WIDTH, 16, "3.Lang  ", 16, 0);
     apl_font_reverse(0, menu_item*16, HUB75_PANEL_WIDTH, 16);
+  }
+  else if(page == 1)
+  {
+    apl_font_display(0, 16, HUB75_PANEL_WIDTH, 16, "4.Freq  ", 16, 0);
+    apl_font_display(0, 32, HUB75_PANEL_WIDTH, 16, "        ", 16, 0);
+    apl_font_display(0, 48, HUB75_PANEL_WIDTH, 16, "        ", 16, 0);
+    apl_font_reverse(0, (menu_item-3)*16, HUB75_PANEL_WIDTH, 16);
   }
 }
 
@@ -356,6 +381,75 @@ void apl_menu_2_display(uint8_t page)
   }
 }
 
+void apl_menu_4_callback(void)
+{
+
+  switch(key_value)
+  {
+    case KEY1_SHORT:
+      if(menu_item-- == 1)
+        menu_item = 2;
+      apl_menu_4_display((menu_item-1)/3);
+      break;
+
+    case KEY1_LONG:
+      break;
+
+    case KEY2_SHORT:
+      if(menu_item++ == 2)
+        menu_item = 1;
+      apl_menu_4_display((menu_item-1)/3);
+      break;
+
+    case KEY2_LONG:
+      break;
+
+    case KEY3_SHORT:
+      if(menu_item == 1)
+      {
+        menu_state = Menu_4_1;
+        menu_item = 1;
+        apl_menu_4_1_display((menu_item-1)/3);
+      }
+      else if(menu_item == 2)
+      {
+        menu_state = Menu_4_2;
+        menu_item = 1;
+        apl_menu_4_2_display((menu_item-1)/3);
+      }
+      break;
+
+    case KEY3_LONG:
+      break;
+
+    case KEY4_SHORT:
+        menu_state = Menu_M;
+        menu_item = 1;
+        apl_menu_m_display((menu_item-1)/3);
+        font_mode = 0;
+      break;
+
+    case KEY4_LONG:
+      break;
+
+    default:
+      break;
+  }
+}
+
+void apl_menu_4_display(uint8_t page)
+{
+  apl_font_display(0, 0, HUB75_PANEL_WIDTH, 16, "  FREQ  ", 16, 0);
+
+  if(page == 0)
+  {
+    apl_font_display(0, 16, HUB75_PANEL_WIDTH, 16, "1.D_freq", 16, 0);
+    apl_font_display(0, 32, HUB75_PANEL_WIDTH, 16, "2.S_peri", 16, 0);
+    apl_font_display(0, 48, HUB75_PANEL_WIDTH, 16, "        ", 16, 0);
+    apl_font_reverse(0, menu_item*16, HUB75_PANEL_WIDTH, 16);
+  }
+}
+
 void apl_menu_1_1_callback(void)
 {
 
@@ -433,6 +527,133 @@ void apl_menu_1_1_display(uint8_t page)
     apl_font_display(0, 16, HUB75_PANEL_WIDTH, 16, "1.SEL. *", 16, 0);
     apl_font_display(0, 32, HUB75_PANEL_WIDTH, 16, "2.UPG. *", 16, 0);
     apl_font_display(0, 48, HUB75_PANEL_WIDTH, 16, "3.EAU. !", 16, 0);
+    apl_font_reverse(0, menu_item*16, HUB75_PANEL_WIDTH, 16);
+  }
+}
+
+void apl_menu_4_1_callback(void)
+{
+  if(sys_data.display_freq % 60)
+    sys_data.display_freq = 60;
+
+  switch(key_value)
+  {
+    case KEY1_SHORT:
+      if(sys_data.display_freq == 60)
+        sys_data.display_freq = 900;
+      else
+        sys_data.display_freq -= 60;
+      apl_menu_4_1_display((menu_item-1)/3);
+      break;
+
+    case KEY1_LONG:
+      break;
+
+    case KEY2_SHORT:
+      if(sys_data.display_freq == 900)
+        sys_data.display_freq = 60;
+      else
+        sys_data.display_freq += 60;
+      apl_menu_4_1_display((menu_item-1)/3);
+      break;
+
+    case KEY2_LONG:
+      break;
+
+    case KEY3_SHORT:
+      break;
+
+    case KEY3_LONG:
+      break;
+
+    case KEY4_SHORT:
+        menu_state = Menu_4;
+        menu_item = 1;
+        apl_menu_4_display((menu_item-1)/3);
+      break;
+
+    case KEY4_LONG:
+      break;
+
+    default:
+      break;
+  }
+}
+
+void apl_menu_4_1_display(uint8_t page)
+{
+  uint8_t dis_str[20];
+
+  sprintf((char*)dis_str, " %3d Hz ", sys_data.display_freq);
+  apl_font_display(0, 0, HUB75_PANEL_WIDTH, 16, "Dis_Freq", 16, 0);
+  if(page == 0)
+  {
+    apl_font_display(0, 16, HUB75_PANEL_WIDTH, 16, dis_str, 16, 0);
+    apl_font_display(0, 32, HUB75_PANEL_WIDTH, 16, "        ", 16, 0);
+    apl_font_display(0, 48, HUB75_PANEL_WIDTH, 16, "        ", 16, 0);
+    apl_font_reverse(0, menu_item*16, HUB75_PANEL_WIDTH, 16);
+  }
+}
+
+void apl_menu_4_2_callback(void)
+{
+  if(sys_data.shift_period % 10)
+    sys_data.shift_period = 10;
+
+  switch(key_value)
+  {
+    case KEY1_SHORT:
+      if(sys_data.shift_period == 10)
+        sys_data.shift_period = 900;
+      else
+        sys_data.shift_period -= 10;
+      apl_menu_4_2_display((menu_item-1)/3);
+      break;
+
+    case KEY1_LONG:
+      break;
+
+    case KEY2_SHORT:
+      if(sys_data.shift_period == 900)
+        sys_data.shift_period = 10;
+      else
+        sys_data.shift_period += 10;
+      apl_menu_4_2_display((menu_item-1)/3);
+      break;
+
+    case KEY2_LONG:
+      break;
+
+    case KEY3_SHORT:
+      break;
+
+    case KEY3_LONG:
+      break;
+
+    case KEY4_SHORT:
+        menu_state = Menu_4;
+        menu_item = 1;
+        apl_menu_4_display((menu_item-1)/3);
+      break;
+
+    case KEY4_LONG:
+      break;
+
+    default:
+      break;
+  }
+}
+void apl_menu_4_2_display(uint8_t page)
+{
+  uint8_t dis_str[20];
+
+  sprintf((char*)dis_str, " %3d ms ", sys_data.shift_period);
+  apl_font_display(0, 0, HUB75_PANEL_WIDTH, 16, "Shi_Peri", 16, 0);
+  if(page == 0)
+  {
+    apl_font_display(0, 16, HUB75_PANEL_WIDTH, 16, dis_str, 16, 0);
+    apl_font_display(0, 32, HUB75_PANEL_WIDTH, 16, "        ", 16, 0);
+    apl_font_display(0, 48, HUB75_PANEL_WIDTH, 16, "        ", 16, 0);
     apl_font_reverse(0, menu_item*16, HUB75_PANEL_WIDTH, 16);
   }
 }

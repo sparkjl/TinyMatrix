@@ -23,6 +23,8 @@ void apl_sys_data_read(void)
     strcpy((char*)sys_data.font_text[4], "5th line display text: ");
     strcpy((char*)sys_data.font_text[5], "6th line display text: ");
 
+    sys_data.display_freq = 900;
+    sys_data.shift_period = 100;
     bsp_w25qx_write_sector((uint8_t *)&sys_data, SYS_DATA_ADDR, sizeof(sys_data));
   }
 

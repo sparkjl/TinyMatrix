@@ -11,7 +11,7 @@ void Task_Start(void)
   api_task_create(Task_SysdataHandle, 2000);
   api_task_create(Task_KeyScan, 30);
   api_task_create(Task_MatrixBlink, 1000);
-  api_task_create(Task_MatrixShift, 160);
+  api_task_create(Task_MatrixShift, sys_data.shift_period);
   api_task_create(Task_LED1, 1000);
   api_task_create(Task_MenuHandle, 100);
   api_task_create(Task_FontHandle, 10);
@@ -43,7 +43,7 @@ void Task_MatrixBlink(void)
   if(hub75_blink)
   {
     if(hub75_color++ == HUB75_Color_White)
-      hub75_color = HUB75_Color_Black;
+      hub75_color = HUB75_Color_Red;
   }
 #else
   bsp_hub75_write_panel(r,g,b,10,10);
