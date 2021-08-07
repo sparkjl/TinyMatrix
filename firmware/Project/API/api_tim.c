@@ -40,7 +40,8 @@ void api_tim_handle(void)
   
   if(tim_count-- == 1)
   {
-    tim_count = 15;
+    //tim_count = 15;
+    tim_count = 15 / (sys_data.display_freq / 60);
   }
 
 }

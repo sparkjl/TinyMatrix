@@ -9,8 +9,11 @@ typedef enum
   Menu_1,
   Menu_2,
   Menu_3,
+  Menu_4,
 
   Menu_1_1,
+  Menu_4_1,
+  Menu_4_2,
 
 } Menu_StateTypeDef;
 
@@ -28,8 +31,14 @@ void apl_menu_1_callback(void);
 void apl_menu_1_display(uint8_t page);
 void apl_menu_2_callback(void);
 void apl_menu_2_display(uint8_t page);
+void apl_menu_4_callback(void);
+void apl_menu_4_display(uint8_t page);
 void apl_menu_1_1_callback(void);
 void apl_menu_1_1_display(uint8_t page);
+void apl_menu_4_1_callback(void);
+void apl_menu_4_1_display(uint8_t page);
+void apl_menu_4_2_callback(void);
+void apl_menu_4_2_display(uint8_t page);
 
 #endif /* __APL_KEY_MENU_H_ */
 
