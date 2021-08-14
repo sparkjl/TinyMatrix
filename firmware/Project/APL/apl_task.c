@@ -11,10 +11,10 @@ void Task_Start(void)
   api_task_create(Task_SysdataHandle, 2000);
   api_task_create(Task_KeyScan, 30);
   api_task_create(Task_MatrixBlink, 1000);
-  api_task_create(Task_MatrixShift, 160);
+  api_task_create(Task_MatrixShift, sys_data.shift_period);
   api_task_create(Task_LED1, 1000);
   api_task_create(Task_MenuHandle, 100);
-  api_task_create(Task_FontHandle, 50);
+  api_task_create(Task_FontHandle, 10);
   //api_task_create(Task_UartTx, 50);
 }
 
@@ -43,7 +43,7 @@ void Task_MatrixBlink(void)
   if(hub75_blink)
   {
     if(hub75_color++ == HUB75_Color_White)
-      hub75_color = HUB75_Color_Black;
+      hub75_color = HUB75_Color_Red;
   }
 #else
   bsp_hub75_write_panel(r,g,b,10,10);
@@ -56,17 +56,34 @@ void Task_MatrixBlink(void)
 
 void Task_MatrixShift(void)
 {
-#if 1
-  apl_font_rolling( 0, sys_data.font_text[0], 16, &roll[0]);
-  apl_font_rolling(16, sys_data.font_text[1], 16, &roll[1]);
-  apl_font_rolling(32, sys_data.font_text[2], 16, &roll[2]);
-  apl_font_rolling(48, sys_data.font_text[3], 16, &roll[3]);
-#else
-  apl_led_matrix_left_shift( 0, 16, 1);
-  apl_led_matrix_left_shift(16, 16, 1);
-  apl_led_matrix_left_shift(32, 16, 1);
-  apl_led_matrix_left_shift(50, 16, 1);
-#endif
+  if(sys_data.font_size == 12)
+  {
+    apl_font_rolling( 0, sys_data.font_text[0], 12, &roll[0]);
+    apl_font_rolling(13, sys_data.font_text[1], 12, &roll[1]);
+    apl_font_rolling(26, sys_data.font_text[2], 12, &roll[2]);
+    apl_font_rolling(39, sys_data.font_text[3], 12, &roll[3]);
+    apl_font_rolling(52, sys_data.font_text[4], 12, &roll[4]);
+  }
+  else if(sys_data.font_size == 16)
+  {
+    apl_font_rolling( 0, sys_data.font_text[0], 16, &roll[0]);
+    apl_font_rolling(16, sys_data.font_text[1], 16, &roll[1]);
+    apl_font_rolling(32, sys_data.font_text[2], 16, &roll[2]);
+    apl_font_rolling(48, sys_data.font_text[3], 16, &roll[3]);
+  }
+  else if(sys_data.font_size == 24)
+  {
+    apl_font_rolling( 5, sys_data.font_text[0], 24, &roll[0]);
+    apl_font_rolling(35, sys_data.font_text[1], 24, &roll[1]);
+  }
+  else
+  {
+    apl_font_rolling( 0, sys_data.font_text[0], 16, &roll[0]);
+    apl_font_rolling(16, sys_data.font_text[1], 16, &roll[1]);
+    apl_font_rolling(32, sys_data.font_text[2], 16, &roll[2]);
+    apl_font_rolling(48, sys_data.font_text[3], 16, &roll[3]);
+  }
+
 }
 
 void Task_MatrixTest(void)
@@ -131,15 +148,10 @@ void Task_FontHandle(void)
 {
   if(font_mode == 0)
   {
+    apl_ulink_handle();
   }
   else if(font_mode == 1)
   {
-//    if(font_size == 12)
-//      apl_font_upgrade(0);
-//    else if(font_size == 16)
-//      apl_font_upgrade(1);
-//    else if(font_size == 24)
-//      apl_font_upgrade(2);
     apl_ulink_handle();
   }
   else if(font_mode == 2)

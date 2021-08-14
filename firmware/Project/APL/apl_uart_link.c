@@ -165,6 +165,8 @@ uint8_t apl_ulink_handle(void)
     ulink.crc16[0] = uart1.rx_buff[ulink.length+4];
     ulink.crc16[1] = uart1.rx_buff[ulink.length+5];
 
+    api_uart_rx_start(&uart1);
+
     crc_code = crc16_create((uint8_t *)&ulink, ulink.length+4);
 
     if((ulink.crc16[0] == (crc_code & 0xff)) && (ulink.crc16[1] == (crc_code >> 8)))
@@ -175,39 +177,53 @@ uint8_t apl_ulink_handle(void)
         status = 2;
         switch(ulink.func)
         {
-          case 0:
+          case 0x00:
             break;
 
-          case 1:
+          case 0x01:
             apl_font_upgrade(ulink.data, ulink.length);
-            ulink.length = 0;
+            break;
+
+          case 0x10:
+          case 0x11:
+          case 0x12:
+          case 0x13:
+          case 0x14:
+          case 0x15:
+            strcpy((char*)sys_data.font_text[ulink.func & 0x0f], (char*)ulink.data);
             break;
 
           default:
             break;
         }
 
-        uart1.tx_buff[0] = ulink.addr;
-        uart1.tx_buff[1] = ulink.func;
-        uart1.tx_buff[2] = ulink.tick;
-        uart1.tx_buff[3] = ulink.length;
-
-        for(uint16_t i=0; i<ulink.length; i++)
+        if(ulink.func == 0x01)
         {
-          uart1.tx_buff[4+i] = ulink.data[i];
+          uart1.tx_buff[0] = ulink.addr;
+          uart1.tx_buff[1] = ulink.func;
+          uart1.tx_buff[2] = ulink.tick;
+          uart1.tx_buff[3] = ulink.length = 0;
+
+          crc16_fill(uart1.tx_buff, 6);
+          api_uart_tx_start(&uart1, uart1.tx_buff, 6);
         }
+        else
+        {
+          uart1.tx_buff[0] = ulink.addr;
+          uart1.tx_buff[1] = ulink.func;
+          uart1.tx_buff[2] = ulink.tick;
+          uart1.tx_buff[3] = ulink.length;
 
-        crc16_fill(uart1.tx_buff, ulink.length+6);
-        api_uart_tx_start(&uart1, uart1.tx_buff, ulink.length+6);
+          for(uint16_t i=0; i<ulink.length; i++)
+          {
+            uart1.tx_buff[4+i] = ulink.data[i];
+          }
+
+          crc16_fill(uart1.tx_buff, ulink.length+6);
+          api_uart_tx_start(&uart1, uart1.tx_buff, ulink.length+6);
+        }
       }
-
     }
-    else
-    {
-      status = 0;
-    }
-
-    api_uart_rx_start(&uart1);
   }
 
   return status;

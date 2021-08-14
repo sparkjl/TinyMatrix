@@ -38,8 +38,20 @@ void apl_menu_handle(void)
       case Menu_3:
         break;
 
+      case Menu_4:
+        apl_menu_4_callback();
+        break;
+
       case Menu_1_1:
         apl_menu_1_1_callback();
+        break;
+
+      case Menu_4_1:
+        apl_menu_4_1_callback();
+        break;
+
+      case Menu_4_2:
+        apl_menu_4_2_callback();
         break;
 
       default:
@@ -101,7 +113,7 @@ void apl_menu_m_callback(void)
   {
     case KEY1_SHORT:
       if(menu_item-- == 1)
-        menu_item = 3;
+        menu_item = 4;
       apl_menu_m_display((menu_item-1)/3);
       break;
 
@@ -109,7 +121,7 @@ void apl_menu_m_callback(void)
       break;
 
     case KEY2_SHORT:
-      if(menu_item++ == 3)
+      if(menu_item++ == 4)
         menu_item = 1;
       apl_menu_m_display((menu_item-1)/3);
       break;
@@ -133,6 +145,12 @@ void apl_menu_m_callback(void)
       else if(menu_item == 3)
       {
       }
+      else if(menu_item == 4)
+      {
+        menu_state = Menu_4;
+        menu_item = 1;
+        apl_menu_4_display((menu_item-1)/3);
+      }
       break;
 
     case KEY3_LONG:
@@ -145,7 +163,7 @@ void apl_menu_m_callback(void)
       menu_state = Menu_R;
       menu_item = 1;
       apl_menu_r_display((menu_item-1)/3);
-      api_task_create(Task_MatrixShift, 160);
+      api_task_create(Task_MatrixShift, sys_data.shift_period);
       break;
 
     default:
@@ -156,17 +174,20 @@ void apl_menu_m_callback(void)
 void apl_menu_m_display(uint8_t page)
 {
   apl_font_display(0, 0, HUB75_PANEL_WIDTH, 16, " SET UP ", 16, 0);
-  //apl_led_matrix_write_str(" SET UP ", 0);
+
   if(page == 0)
   {
     apl_font_display(0, 16, HUB75_PANEL_WIDTH, 16, "1.Font  ", 16, 0);
     apl_font_display(0, 32, HUB75_PANEL_WIDTH, 16, "2.Color ", 16, 0);
     apl_font_display(0, 48, HUB75_PANEL_WIDTH, 16, "3.Lang  ", 16, 0);
     apl_font_reverse(0, menu_item*16, HUB75_PANEL_WIDTH, 16);
-    //apl_led_matrix_write_str("1.Mode  ", 1);
-    //apl_led_matrix_write_str("2.Color ", 2);
-    //apl_led_matrix_write_str("3.Langua", 3);
-    //apl_led_matrix_invert_row(menu_item);
+  }
+  else if(page == 1)
+  {
+    apl_font_display(0, 16, HUB75_PANEL_WIDTH, 16, "4.Freq  ", 16, 0);
+    apl_font_display(0, 32, HUB75_PANEL_WIDTH, 16, "        ", 16, 0);
+    apl_font_display(0, 48, HUB75_PANEL_WIDTH, 16, "        ", 16, 0);
+    apl_font_reverse(0, (menu_item-3)*16, HUB75_PANEL_WIDTH, 16);
   }
 }
 
@@ -196,21 +217,10 @@ void apl_menu_1_callback(void)
     case KEY3_SHORT:
       if(menu_item == 1)
       {
-        //memset(font_buff, 0, sizeof(font_buff));
-        //bsp_w25qx_read(font_buff, HZ_FONT_ADDR_0, 256);
         font_size = 12;
       }
       else if(menu_item == 2)
       {
-        //font_buff[0] = 0xad;
-        //font_buff[1] = 0x34;
-        //font_buff[2] = 0x56;
-        //font_buff[3] = 0x6a;
-        //font_buff[4] = 0xec;
-        //font_buff[5] = 0x96;
-        //font_buff[6] = 0x69;
-        //font_buff[7] = 0x00;
-        //bsp_w25qx_write(font_buff, HZ_FONT_ADDR_0, 256);
         font_size = 16;
       }
       else if(menu_item == 3)
@@ -243,17 +253,13 @@ void apl_menu_1_callback(void)
 void apl_menu_1_display(uint8_t page)
 {
   apl_font_display(0, 0, HUB75_PANEL_WIDTH, 16, "  FONT  ", 16, 0);
-  //apl_led_matrix_write_str("  MODE  ", 0);
+
   if(page == 0)
   {
     apl_font_display(0, 16, HUB75_PANEL_WIDTH, 16, "1.Font12", 16, 0);
     apl_font_display(0, 32, HUB75_PANEL_WIDTH, 16, "2.Font16", 16, 0);
     apl_font_display(0, 48, HUB75_PANEL_WIDTH, 16, "3.Font24", 16, 0);
     apl_font_reverse(0, menu_item*16, HUB75_PANEL_WIDTH, 16);
-    //apl_led_matrix_write_str("1.Static", 1);
-    //apl_led_matrix_write_str("2.Dynami", 2);
-    //apl_led_matrix_write_str("3.Upgrad", 3);
-    //apl_led_matrix_invert_row(menu_item);
   }
 }
 
@@ -351,17 +357,13 @@ void apl_menu_2_callback(void)
 void apl_menu_2_display(uint8_t page)
 {
   apl_font_display(0, 0, HUB75_PANEL_WIDTH, 16, "  COLOR ", 16, 0);
-  //apl_led_matrix_write_str("  COLOR ", 0);
+
   if(page == 0)
   {
     apl_font_display(0, 16, HUB75_PANEL_WIDTH, 16, "1.Red   ", 16, 0);
     apl_font_display(0, 32, HUB75_PANEL_WIDTH, 16, "2.Green ", 16, 0);
     apl_font_display(0, 48, HUB75_PANEL_WIDTH, 16, "3.Yellow", 16, 0);
     apl_font_reverse(0, (menu_item)*16, HUB75_PANEL_WIDTH, 16);
-    //apl_led_matrix_write_str("1.Red   ", 1);
-    //apl_led_matrix_write_str("2.Green ", 2);
-    //apl_led_matrix_write_str("3.Yellow", 3);
-    //apl_led_matrix_invert_row(menu_item);
   }
   else if(page == 1)
   {
@@ -369,10 +371,6 @@ void apl_menu_2_display(uint8_t page)
     apl_font_display(0, 32, HUB75_PANEL_WIDTH, 16, "5.Pink  ", 16, 0);
     apl_font_display(0, 48, HUB75_PANEL_WIDTH, 16, "6.Cyan  ", 16, 0);
     apl_font_reverse(0, (menu_item-3)*16, HUB75_PANEL_WIDTH, 16);
-    //apl_led_matrix_write_str("4.Blue  ", 1);
-    //apl_led_matrix_write_str("5.Pink  ", 2);
-    //apl_led_matrix_write_str("6.Cyan  ", 3);
-    //apl_led_matrix_invert_row(menu_item-3);
   }
   else if(page == 2)
   {
@@ -380,10 +378,75 @@ void apl_menu_2_display(uint8_t page)
     apl_font_display(0, 32, HUB75_PANEL_WIDTH, 16, "8.Auto  ", 16, 0);
     apl_font_display(0, 48, HUB75_PANEL_WIDTH, 16, "        ", 16, 0);
     apl_font_reverse(0, (menu_item-6)*16, HUB75_PANEL_WIDTH, 16);
-    //apl_led_matrix_write_str("7.White ", 1);
-    //apl_led_matrix_write_str("8.Auto  ", 2);
-    //apl_led_matrix_write_str("        ", 3);
-    //apl_led_matrix_invert_row(menu_item-6);
+  }
+}
+
+void apl_menu_4_callback(void)
+{
+
+  switch(key_value)
+  {
+    case KEY1_SHORT:
+      if(menu_item-- == 1)
+        menu_item = 2;
+      apl_menu_4_display((menu_item-1)/3);
+      break;
+
+    case KEY1_LONG:
+      break;
+
+    case KEY2_SHORT:
+      if(menu_item++ == 2)
+        menu_item = 1;
+      apl_menu_4_display((menu_item-1)/3);
+      break;
+
+    case KEY2_LONG:
+      break;
+
+    case KEY3_SHORT:
+      if(menu_item == 1)
+      {
+        menu_state = Menu_4_1;
+        menu_item = 1;
+        apl_menu_4_1_display((menu_item-1)/3);
+      }
+      else if(menu_item == 2)
+      {
+        menu_state = Menu_4_2;
+        menu_item = 1;
+        apl_menu_4_2_display((menu_item-1)/3);
+      }
+      break;
+
+    case KEY3_LONG:
+      break;
+
+    case KEY4_SHORT:
+        menu_state = Menu_M;
+        menu_item = 1;
+        apl_menu_m_display((menu_item-1)/3);
+        font_mode = 0;
+      break;
+
+    case KEY4_LONG:
+      break;
+
+    default:
+      break;
+  }
+}
+
+void apl_menu_4_display(uint8_t page)
+{
+  apl_font_display(0, 0, HUB75_PANEL_WIDTH, 16, "  FREQ  ", 16, 0);
+
+  if(page == 0)
+  {
+    apl_font_display(0, 16, HUB75_PANEL_WIDTH, 16, "1.D_freq", 16, 0);
+    apl_font_display(0, 32, HUB75_PANEL_WIDTH, 16, "2.S_peri", 16, 0);
+    apl_font_display(0, 48, HUB75_PANEL_WIDTH, 16, "        ", 16, 0);
+    apl_font_reverse(0, menu_item*16, HUB75_PANEL_WIDTH, 16);
   }
 }
 
@@ -464,6 +527,133 @@ void apl_menu_1_1_display(uint8_t page)
     apl_font_display(0, 16, HUB75_PANEL_WIDTH, 16, "1.SEL. *", 16, 0);
     apl_font_display(0, 32, HUB75_PANEL_WIDTH, 16, "2.UPG. *", 16, 0);
     apl_font_display(0, 48, HUB75_PANEL_WIDTH, 16, "3.EAU. !", 16, 0);
+    apl_font_reverse(0, menu_item*16, HUB75_PANEL_WIDTH, 16);
+  }
+}
+
+void apl_menu_4_1_callback(void)
+{
+  if(sys_data.display_freq % 60)
+    sys_data.display_freq = 60;
+
+  switch(key_value)
+  {
+    case KEY1_SHORT:
+      if(sys_data.display_freq == 60)
+        sys_data.display_freq = 900;
+      else
+        sys_data.display_freq -= 60;
+      apl_menu_4_1_display((menu_item-1)/3);
+      break;
+
+    case KEY1_LONG:
+      break;
+
+    case KEY2_SHORT:
+      if(sys_data.display_freq == 900)
+        sys_data.display_freq = 60;
+      else
+        sys_data.display_freq += 60;
+      apl_menu_4_1_display((menu_item-1)/3);
+      break;
+
+    case KEY2_LONG:
+      break;
+
+    case KEY3_SHORT:
+      break;
+
+    case KEY3_LONG:
+      break;
+
+    case KEY4_SHORT:
+        menu_state = Menu_4;
+        menu_item = 1;
+        apl_menu_4_display((menu_item-1)/3);
+      break;
+
+    case KEY4_LONG:
+      break;
+
+    default:
+      break;
+  }
+}
+
+void apl_menu_4_1_display(uint8_t page)
+{
+  uint8_t dis_str[20];
+
+  sprintf((char*)dis_str, " %3d Hz ", sys_data.display_freq);
+  apl_font_display(0, 0, HUB75_PANEL_WIDTH, 16, "Dis_Freq", 16, 0);
+  if(page == 0)
+  {
+    apl_font_display(0, 16, HUB75_PANEL_WIDTH, 16, dis_str, 16, 0);
+    apl_font_display(0, 32, HUB75_PANEL_WIDTH, 16, "        ", 16, 0);
+    apl_font_display(0, 48, HUB75_PANEL_WIDTH, 16, "        ", 16, 0);
+    apl_font_reverse(0, menu_item*16, HUB75_PANEL_WIDTH, 16);
+  }
+}
+
+void apl_menu_4_2_callback(void)
+{
+  if(sys_data.shift_period % 10)
+    sys_data.shift_period = 10;
+
+  switch(key_value)
+  {
+    case KEY1_SHORT:
+      if(sys_data.shift_period == 10)
+        sys_data.shift_period = 900;
+      else
+        sys_data.shift_period -= 10;
+      apl_menu_4_2_display((menu_item-1)/3);
+      break;
+
+    case KEY1_LONG:
+      break;
+
+    case KEY2_SHORT:
+      if(sys_data.shift_period == 900)
+        sys_data.shift_period = 10;
+      else
+        sys_data.shift_period += 10;
+      apl_menu_4_2_display((menu_item-1)/3);
+      break;
+
+    case KEY2_LONG:
+      break;
+
+    case KEY3_SHORT:
+      break;
+
+    case KEY3_LONG:
+      break;
+
+    case KEY4_SHORT:
+        menu_state = Menu_4;
+        menu_item = 1;
+        apl_menu_4_display((menu_item-1)/3);
+      break;
+
+    case KEY4_LONG:
+      break;
+
+    default:
+      break;
+  }
+}
+void apl_menu_4_2_display(uint8_t page)
+{
+  uint8_t dis_str[20];
+
+  sprintf((char*)dis_str, " %3d ms ", sys_data.shift_period);
+  apl_font_display(0, 0, HUB75_PANEL_WIDTH, 16, "Shi_Peri", 16, 0);
+  if(page == 0)
+  {
+    apl_font_display(0, 16, HUB75_PANEL_WIDTH, 16, dis_str, 16, 0);
+    apl_font_display(0, 32, HUB75_PANEL_WIDTH, 16, "        ", 16, 0);
+    apl_font_display(0, 48, HUB75_PANEL_WIDTH, 16, "        ", 16, 0);
     apl_font_reverse(0, menu_item*16, HUB75_PANEL_WIDTH, 16);
   }
 }

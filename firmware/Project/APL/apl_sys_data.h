@@ -4,6 +4,7 @@
 #define SYS_PRODUCT_SN           "PAD20201220"          /* product SN number */
 #define SYS_FIRMWARE_SN          "FAD20201220"          /* firmware SN number */
 #define SYS_DATA_ADDR            0x00000000U            /* system data addr in spi flash */
+#define SYS_FONT_ADDR            0x00200000U            /* system font addr in spi flash */
 
 /* system data definition */
 typedef struct
@@ -16,8 +17,10 @@ typedef struct
   uint8_t       display_mode;
   uint8_t       display_language;
   uint8_t       font_size;
-  uint8_t       font_text[6][64];
-  uint8_t       reserved[548];            // 1024bytes in total
+  uint8_t       font_text[6][128];
+  uint16_t      display_freq;
+  uint16_t      shift_period;
+  uint8_t       reserved[160];            // 1024bytes in total
 
 } System_DataTypeDef;
 

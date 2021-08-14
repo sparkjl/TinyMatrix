@@ -1,21 +1,17 @@
 #ifndef __FONT_H_
 #define __FONT_H_
 
-#define HZ_FONT_ADDR_0            0x00200000U      /* song12 font addr in spi flash */
-#define HZ_FONT_ADDR_1            0x0028D000U      /* song16 font addr in spi flash */
-#define HZ_FONT_ADDR_2            0x00349000U      /* song24 font addr in spi flash */
-#define HZ_FONT_ADDR_END          0x004EE000U      /* end font addr in spi flash */
+#define HZ_FONT_SIZE_0            0x0008D000U                          /* song12 font size:   577,536 bytes */
+#define HZ_FONT_SIZE_1            0x000BC000U                          /* song16 font size:   770,048 bytes */
+#define HZ_FONT_SIZE_2            0x001A5000U                          /* song24 font size: 1,724,416 bytes */
 
-#define  hzNum       23
-#define  charNum     95
+#define HZ_FONT_ADDR_0            SYS_FONT_ADDR                        /* song12 font addr in spi flash */
+#define HZ_FONT_ADDR_1            HZ_FONT_ADDR_0 + HZ_FONT_SIZE_0      /* song16 font addr in spi flash */
+#define HZ_FONT_ADDR_2            HZ_FONT_ADDR_1 + HZ_FONT_SIZE_1      /* song24 font addr in spi flash */
+#define HZ_FONT_ADDR_END          HZ_FONT_ADDR_2 + HZ_FONT_SIZE_2      /* end font addr in spi flash */
+
 
 #define ASCII_FONT_STYLE
-
-extern unsigned char hzIndex[46];
-extern unsigned char hzdot[736];
-
-extern unsigned char charIndex[95];
-extern unsigned char chardot[1520];
 
 //extern unsigned char ascii_1206[95][12];
 //extern unsigned char ascii_1608[95][16];
@@ -37,7 +33,6 @@ typedef struct
 extern Roll_DisplayTypeDef roll[16];
 
 uint8_t apl_font_erase(uint8_t index);
-//void apl_font_upgrade(uint8_t index);
 void apl_font_upgrade(uint8_t *p_buff, uint16_t size);
 
 void apl_font_init(void);
