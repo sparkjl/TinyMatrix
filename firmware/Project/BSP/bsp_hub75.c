@@ -6,10 +6,77 @@ uint8_t hub75_blink = 0;
 
 uint8_t hub75_panel_buff[HUB75_PANEL_WIDTH * HUB75_PANEL_HEIGHT / 2 * 3];
 
+void send_clock(void)
+{
+  HUB75_CLK_H();
+  HUB75_CLK_L();
+}
+
+void send_latch(unsigned char clock)
+{
+  HUB75_LAT_H();
+  while(clock--)
+  {
+    send_clock();
+  }
+  HUB75_LAT_L();
+}
+
+void send_pwm_cycle(unsigned char cycle)
+{
+  while(cycle--)
+  {
+    HUB75_OE_H();
+    HUB75_OE_L();
+  }
+}
+
+void send_config(unsigned int data, unsigned char clock)
+{
+  unsigned char num = HUB75_PANEL_WIDTH/16;      // chip number
+  unsigned int mask = 0x8000;
+
+  clock = 16 - clock;
+
+  while(num--)
+  {
+    for(unsigned char bit=0; bit<16; bit++)
+    {
+      mask = 0x8000 >> bit;
+
+      if(data & mask)
+      {
+        HUB75_DR1_H();
+        HUB75_DG1_H();
+        HUB75_DB1_H();
+        HUB75_DR2_H();
+        HUB75_DG2_H();
+        HUB75_DB2_H();
+      }
+      else
+      {
+        HUB75_DR1_L();
+        HUB75_DG1_L();
+        HUB75_DB1_L();
+        HUB75_DR2_L();
+        HUB75_DG2_L();
+        HUB75_DB2_L();
+      }
+
+      if(num == 0 && bit == clock)
+        HUB75_LAT_H();
+      send_clock();
+    }
+
+    HUB75_LAT_L();
+  }
+}
+
 void bsp_hub75_init(void)
 {
-  HUB75_OE_H();
+  HUB75_OE_L();
   HUB75_CLK_L();
+  HUB75_LAT_L();
 
   HUB75_DR1_L();
   HUB75_DG1_L();
@@ -23,6 +90,23 @@ void bsp_hub75_init(void)
   HUB75_C_L();
   HUB75_D_L();
   HUB75_E_L();
+
+#if HUB75_DRIVER_TYPE == 2
+  /* Configure SRAM */
+  send_latch(14);      // Pre-Active command
+  send_latch(12);      // Enable all output channels
+  send_latch(3);       // Vertical Sync
+  send_latch(14);      // Pre-Active command
+  send_config(0x1F70, 4);                  // Write config register 1 (4 latches)
+  send_latch(14);      // Pre-Active command
+  send_config(0xffff, 6);                  // Write config register 2 (6 latches)
+  send_latch(14);      // Pre-Active command
+  send_config(0x40F3, 8);                  // Write config register 3 (8 latches)
+  send_latch(14);      // Pre-Active command
+  send_config(0x0000, 10);                 // Write config register 4 (10 latches)
+  send_latch(14);      // Pre-Active command
+  send_config(0x0000, 2);                  // Write debug register (2 latches)
+#endif
 
 #if 1
   for(uint8_t i=0;i<32;i++)
@@ -47,6 +131,7 @@ void bsp_hub75_init(void)
 #endif
 }
 
+#if HUB75_DRIVER_TYPE == 0
 void bsp_hub75_write_byte(uint8_t p_buff[], uint8_t color)
 {
   static uint16_t row = 0;
@@ -110,6 +195,80 @@ void bsp_hub75_write_byte(uint8_t p_buff[], uint8_t color)
     row = 0;
 
 }
+#endif
+
+#if HUB75_DRIVER_TYPE == 2
+void bsp_hub75_write_byte(uint8_t p_buff[], uint8_t color)
+{
+  static uint16_t row = 0;
+  uint16_t data_r1, data_g1, data_b1, data_r2, data_g2, data_b2 = 0;
+
+  /* Vertical Sync */
+  send_latch(3);
+
+  /* write row addr */
+  (row & 0x0001) ? HUB75_A_H() : HUB75_A_L();
+  (row & 0x0002) ? HUB75_B_H() : HUB75_B_L();
+  (row & 0x0004) ? HUB75_C_H() : HUB75_C_L();
+  (row & 0x0008) ? HUB75_D_H() : HUB75_D_L();
+  (row & 0x0010) ? HUB75_E_H() : HUB75_E_L();
+  send_pwm_cycle(138);      // send 138 clock cycles for PWM generation inside the ICN2053 chips - this needs to be exactly 138 pulses
+
+  /* write column data */
+  for(uint16_t sect=0; sect<(HUB75_PANEL_WIDTH/16); sect++)
+  {
+    data_r1 = data_g1 = data_b1 = 0;
+    data_r2 = data_g2 = data_b2 = 0;
+
+    /* color red */
+    if(color & 0x01)
+    {
+      data_b1 = p_buff[row*(HUB75_PANEL_WIDTH/8)+sect*2];
+      data_b1 = (data_b1 << 8) + p_buff[row*(HUB75_PANEL_WIDTH/8)+sect*2+1];
+      data_b2 = p_buff[row*(HUB75_PANEL_WIDTH/8)+(HUB75_PANEL_WIDTH/8*HUB75_PANEL_HEIGHT/2)+sect*2];
+      data_b2 = (data_b2 << 8) + p_buff[row*(HUB75_PANEL_WIDTH/8)+(HUB75_PANEL_WIDTH/8*HUB75_PANEL_HEIGHT/2)+sect*2+1];
+    }
+
+    /* color green */
+    if(color & 0x02)
+    {
+      data_r1 = p_buff[row*(HUB75_PANEL_WIDTH/8)+sect*2];
+      data_r1 = (data_r1 << 8) + p_buff[row*(HUB75_PANEL_WIDTH/8)+sect*2+1];
+      data_r2 = p_buff[row*(HUB75_PANEL_WIDTH/8)+(HUB75_PANEL_WIDTH/8*HUB75_PANEL_HEIGHT/2)+sect*2];
+      data_r2 = (data_r2 << 8) + p_buff[row*(HUB75_PANEL_WIDTH/8)+(HUB75_PANEL_WIDTH/8*HUB75_PANEL_HEIGHT/2)+sect*2+1];
+    }
+
+    /* color blue */
+    if(color & 0x04)
+    {
+      data_g1 = p_buff[row*(HUB75_PANEL_WIDTH/8)+sect*2];
+      data_g1 = (data_g1 << 8) + p_buff[row*(HUB75_PANEL_WIDTH/8)+sect*2+1];
+      data_g2 = p_buff[row*(HUB75_PANEL_WIDTH/8)+(HUB75_PANEL_WIDTH/8*HUB75_PANEL_HEIGHT/2)+sect*2];
+      data_g2 = (data_g2 << 8) + p_buff[row*(HUB75_PANEL_WIDTH/8)+(HUB75_PANEL_WIDTH/8*HUB75_PANEL_HEIGHT/2)+sect*2+1];
+    }
+
+    /* horizontal 16 bits data */
+    for(uint8_t bit=0; bit<16; bit++)
+    {
+      ((data_r1 << bit) & 0x8000) ? HUB75_DR1_H() : HUB75_DR1_L();
+      ((data_g1 << bit) & 0x8000) ? HUB75_DG1_H() : HUB75_DG1_L();
+      ((data_b1 << bit) & 0x8000) ? HUB75_DB1_H() : HUB75_DB1_L();
+      ((data_r2 << bit) & 0x8000) ? HUB75_DR2_H() : HUB75_DR2_L();
+      ((data_g2 << bit) & 0x8000) ? HUB75_DG2_H() : HUB75_DG2_L();
+      ((data_b2 << bit) & 0x8000) ? HUB75_DB2_H() : HUB75_DB2_L();
+
+      if(sect == (HUB75_PANEL_WIDTH/16-1) && bit == 15)
+        HUB75_LAT_H();
+      send_clock();
+    }
+    HUB75_LAT_L();
+  }
+
+  if(++row >= (HUB75_PANEL_HEIGHT/2))
+    row = 0;
+
+}
+#endif
 
 void bsp_hub75_write_pixel(uint8_t p_buff[])
 {

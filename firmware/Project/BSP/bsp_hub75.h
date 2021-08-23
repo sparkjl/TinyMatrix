@@ -48,6 +48,9 @@ typedef enum
 
 } HUB75_ColorTypeDef;
 
+/* hub75 led driver type */
+#define HUB75_DRIVER_TYPE                     2      // 0: SM1612 1: MBI5153 2: ICN2053/ICN2153
+
 extern uint8_t hub75_buff[HUB75_PANEL_WIDTH/8 * HUB75_PANEL_HEIGHT];
 extern uint8_t hub75_color;
 extern uint8_t hub75_blink;
