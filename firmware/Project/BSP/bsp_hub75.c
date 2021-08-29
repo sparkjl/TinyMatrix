@@ -31,6 +31,15 @@ void send_pwm_cycle(unsigned char cycle)
   }
 }
 
+void send_scan_line(unsigned char line)
+{
+  (line & 0x0001) ? HUB75_A_H() : HUB75_A_L();
+  (line & 0x0002) ? HUB75_B_H() : HUB75_B_L();
+  (line & 0x0004) ? HUB75_C_H() : HUB75_C_L();
+  (line & 0x0008) ? HUB75_D_H() : HUB75_D_L();
+  (line & 0x0010) ? HUB75_E_H() : HUB75_E_L();
+}
+
 void send_config(unsigned int data, unsigned char clock)
 {
   unsigned char num = HUB75_PANEL_WIDTH/16;      // chip number
@@ -201,72 +210,96 @@ void bsp_hub75_write_byte(uint8_t p_buff[], uint8_t color)
 void bsp_hub75_write_byte(uint8_t p_buff[], uint8_t color)
 {
   static uint16_t row = 0;
+  uint16_t data_sect1, data_sect2 = 0;
   uint16_t data_r1, data_g1, data_b1, data_r2, data_g2, data_b2 = 0;
 
   /* Vertical Sync */
   send_latch(3);
 
-  /* write row addr */
-  (row & 0x0001) ? HUB75_A_H() : HUB75_A_L();
-  (row & 0x0002) ? HUB75_B_H() : HUB75_B_L();
-  (row & 0x0004) ? HUB75_C_H() : HUB75_C_L();
-  (row & 0x0008) ? HUB75_D_H() : HUB75_D_L();
-  (row & 0x0010) ? HUB75_E_H() : HUB75_E_L();
-  send_pwm_cycle(138);      // send 138 clock cycles for PWM generation inside the ICN2053 chips - this needs to be exactly 138 pulses
-
-  /* write column data */
-  for(uint16_t sect=0; sect<(HUB75_PANEL_WIDTH/16); sect++)
+  for(uint16_t y=0; y<(HUB75_PANEL_HEIGHT/2); y++)      // (panel height/2) scan lines in 1 panel
   {
-    data_r1 = data_g1 = data_b1 = 0;
-    data_r2 = data_g2 = data_b2 = 0;
-
-    /* color red */
-    if(color & 0x01)
+    for(uint16_t x=0; x<16; x++)      // 16 ouput channels in 1 chip
     {
-      data_b1 = p_buff[row*(HUB75_PANEL_WIDTH/8)+sect*2];
-      data_b1 = (data_b1 << 8) + p_buff[row*(HUB75_PANEL_WIDTH/8)+sect*2+1];
-      data_b2 = p_buff[row*(HUB75_PANEL_WIDTH/8)+(HUB75_PANEL_WIDTH/8*HUB75_PANEL_HEIGHT/2)+sect*2];
-      data_b2 = (data_b2 << 8) + p_buff[row*(HUB75_PANEL_WIDTH/8)+(HUB75_PANEL_WIDTH/8*HUB75_PANEL_HEIGHT/2)+sect*2+1];
-    }
+      send_scan_line(y % 2 * (HUB75_PANEL_HEIGHT/4) + x);
+      send_pwm_cycle(138);      // send 138 clock cycles for PWM generation inside the ICN2053 chips - this needs to be exactly 138 pulses
 
-    /* color green */
-    if(color & 0x02)
-    {
-      data_r1 = p_buff[row*(HUB75_PANEL_WIDTH/8)+sect*2];
-      data_r1 = (data_r1 << 8) + p_buff[row*(HUB75_PANEL_WIDTH/8)+sect*2+1];
-      data_r2 = p_buff[row*(HUB75_PANEL_WIDTH/8)+(HUB75_PANEL_WIDTH/8*HUB75_PANEL_HEIGHT/2)+sect*2];
-      data_r2 = (data_r2 << 8) + p_buff[row*(HUB75_PANEL_WIDTH/8)+(HUB75_PANEL_WIDTH/8*HUB75_PANEL_HEIGHT/2)+sect*2+1];
-    }
+      /* write column data */
+      for(uint16_t sect=0; sect<(HUB75_PANEL_WIDTH/16); sect++)
+      {
+        data_r1 = data_g1 = data_b1 = 0x0000;
+        data_r2 = data_g2 = data_b2 = 0x0000;
 
-    /* color blue */
-    if(color & 0x04)
-    {
-      data_g1 = p_buff[row*(HUB75_PANEL_WIDTH/8)+sect*2];
-      data_g1 = (data_g1 << 8) + p_buff[row*(HUB75_PANEL_WIDTH/8)+sect*2+1];
-      data_g2 = p_buff[row*(HUB75_PANEL_WIDTH/8)+(HUB75_PANEL_WIDTH/8*HUB75_PANEL_HEIGHT/2)+sect*2];
-      data_g2 = (data_g2 << 8) + p_buff[row*(HUB75_PANEL_WIDTH/8)+(HUB75_PANEL_WIDTH/8*HUB75_PANEL_HEIGHT/2)+sect*2+1];
-    }
+        /* color red */
+        if(color & 0x01)
+        {
+          data_r1 = 0xffff;
+          data_r2 = 0xffff;
+        }
 
-    /* horizontal 16 bits data */
-    for(uint8_t bit=0; bit<16; bit++)
-    {
-      ((data_r1 << bit) & 0x8000) ? HUB75_DR1_H() : HUB75_DR1_L();
-      ((data_g1 << bit) & 0x8000) ? HUB75_DG1_H() : HUB75_DG1_L();
-      ((data_b1 << bit) & 0x8000) ? HUB75_DB1_H() : HUB75_DB1_L();
-      ((data_r2 << bit) & 0x8000) ? HUB75_DR2_H() : HUB75_DR2_L();
-      ((data_g2 << bit) & 0x8000) ? HUB75_DG2_H() : HUB75_DG2_L();
-      ((data_b2 << bit) & 0x8000) ? HUB75_DB2_H() : HUB75_DB2_L();
+        /* color green */
+        if(color & 0x02)
+        {
+          data_g1 = 0xffff;
+          data_g2 = 0xffff;
+        }
 
-      if(sect == (HUB75_PANEL_WIDTH/16-1) && bit == 15)
-        HUB75_LAT_H();
-      send_clock();
+        /* color blue */
+        if(color & 0x04)
+        {
+          data_b1 = 0xffff;
+          data_b2 = 0xffff;
+        }
+
+        /* get section data */
+        data_sect1 = p_buff[y*(HUB75_PANEL_WIDTH/8)+sect*2];
+        data_sect1 = (data_sect1 << 8) + p_buff[y*(HUB75_PANEL_WIDTH/8)+sect*2+1];
+        data_sect2 = p_buff[y*(HUB75_PANEL_WIDTH/8)+(HUB75_PANEL_WIDTH/8*HUB75_PANEL_HEIGHT/2)+sect*2];
+        data_sect2 = (data_sect2 << 8) + p_buff[y*(HUB75_PANEL_WIDTH/8)+(HUB75_PANEL_WIDTH/8*HUB75_PANEL_HEIGHT/2)+sect*2+1];
+
+        if((data_sect1 << x) & 0x8000)
+        {
+          data_r1 = data_r1;
+          data_g1 = data_g1;
+          data_b1 = data_b1;
+        }
+        else
+        {
+          data_r1 = 0x0000;
+          data_g1 = 0x0000;
+          data_b1 = 0x0000;
+        }
+
+        if((data_sect2 << x) & 0x8000)
+        {
+          data_r2 = data_r2;
+          data_g2 = data_g2;
+          data_b2 = data_b2;
+        }
+        else
+        {
+          data_r2 = 0x0000;
+          data_g2 = 0x0000;
+          data_b2 = 0x0000;
+        }
+
+        /* horizontal 16 bits data */
+        for(uint8_t bit=0; bit<16; bit++)
+        {
+          ((data_r1 << bit) & 0x8000) ? HUB75_DR1_H() : HUB75_DR1_L();
+          ((data_g1 << bit) & 0x8000) ? HUB75_DG1_H() : HUB75_DG1_L();
+          ((data_b1 << bit) & 0x8000) ? HUB75_DB1_H() : HUB75_DB1_L();
+          ((data_r2 << bit) & 0x8000) ? HUB75_DR2_H() : HUB75_DR2_L();
+          ((data_g2 << bit) & 0x8000) ? HUB75_DG2_H() : HUB75_DG2_L();
+          ((data_b2 << bit) & 0x8000) ? HUB75_DB2_H() : HUB75_DB2_L();
+
+          if(sect == (HUB75_PANEL_WIDTH/16-1) && bit == 15)
+            HUB75_LAT_H();
+          send_clock();
+        }
+        HUB75_LAT_L();
+      }
     }
-    HUB75_LAT_L();
   }
-
-  if(++row >= (HUB75_PANEL_HEIGHT/2))
-    row = 0;
-
 }
 #endif
 
