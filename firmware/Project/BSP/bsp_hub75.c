@@ -232,22 +232,22 @@ void bsp_hub75_write_byte(uint8_t p_buff[], uint8_t color)
         /* color red */
         if(color & 0x01)
         {
-          data_r1 = 0xffff;
-          data_r2 = 0xffff;
+          data_g1 = 0xffff;
+          data_g2 = 0xffff;
         }
 
         /* color green */
         if(color & 0x02)
         {
-          data_g1 = 0xffff;
-          data_g2 = 0xffff;
+          data_b1 = 0xffff;
+          data_b2 = 0xffff;
         }
 
         /* color blue */
         if(color & 0x04)
         {
-          data_b1 = 0xffff;
-          data_b2 = 0xffff;
+          data_r1 = 0xffff;
+          data_r2 = 0xffff;
         }
 
         /* get section data */
