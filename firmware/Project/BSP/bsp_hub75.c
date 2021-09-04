@@ -83,7 +83,7 @@ void send_config(unsigned int data, unsigned char clock)
 
 void bsp_hub75_init(void)
 {
-  HUB75_OE_L();
+  HUB75_OE_H();
   HUB75_CLK_L();
   HUB75_LAT_L();
 
