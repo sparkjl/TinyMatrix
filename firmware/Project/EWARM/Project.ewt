@@ -1196,6 +1196,12 @@
     <file>
       <name>$PROJ_DIR$\..\API\api_uart.h</name>
     </file>
+    <file>
+      <name>$PROJ_DIR$\..\APL\apl_uart_link.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\APL\apl_uart_link.h</name>
+    </file>
   </group>
   <group>
     <name>APL</name>
